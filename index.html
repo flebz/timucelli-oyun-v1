@@ -46,7 +46,21 @@
       }
     </script>
     <style>
-        /* Custom Utilities */
+        /* --- MOBİL İÇİN ÖZEL AYARLAR (EKLENDİ) --- */
+        html, body {
+            touch-action: manipulation; /* Çift tıklama zoom'unu engeller */
+            -webkit-touch-callout: none; /* iOS'ta uzun basma menüsünü engeller */
+            -webkit-user-select: none; /* Yazı seçimini engeller */
+            user-select: none;
+            overflow: hidden; /* Sayfanın sağa sola kaymasını engeller */
+        }
+        
+        /* Butonlara basınca çıkan mavi/gri kutucuğu kaldırır */
+        button, div, a {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* --- Custom Utilities --- */
         .no-select {
             -webkit-user-select: none;
             -moz-user-select: none;
@@ -122,9 +136,7 @@
                 <div class="relative group cursor-pointer" onclick="game.handleClick(event)">
                     <div class="absolute -inset-1 bg-gradient-to-r from-pink-600 to-purple-600 rounded-full blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
                     <div class="relative w-64 h-64 rounded-full bg-slate-800 border-4 border-timur-500 flex items-center justify-center shadow-2xl active:scale-95 transition-transform duration-75 overflow-hidden">
-                        
                         <img src="https://i.hizliresim.com/fkjgah8.png" alt="Timur" class="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity pointer-events-none" />
-                        
                         <div class="absolute bottom-4 bg-black/60 px-3 py-1 rounded-full text-white font-bold backdrop-blur-sm pointer-events-none">
                             Tıkla!
                         </div>
@@ -225,9 +237,9 @@
         const BOSS_LIST = [
           { id: 1, name: "Emir Toksun", baseHealth: 500, rewardKP: 10, rewardTP: 1000, description: "Kadıköy Rıhtım'ın girişinde senden sigara istiyor." },
           { id: 2, name: "Eren Atay", baseHealth: 1200, rewardKP: 25, rewardTP: 2500, description: "Boğa heykelinin yanında iqos içiyor." },
-          { id: 3, name: "Baran Xelîl", baseHealth: 2500, rewardKP: 45, rewardTP: 5000, description: "Metro çıkışında bekleyen sert abi." },
-          { id: 4, name: "Botan Ehmed", baseHealth: 4000, rewardKP: 70, rewardTP: 8500, description: "Moda sahilde nargile içiyor." },
-          { id: 5, name: "Ciwan Reşîd", baseHealth: 6500, rewardKP: 100, rewardTP: 15000, description: "Akmar Pasajı'nın eski sahibi." },
+          { id: 3, name: "Kayra Torun", baseHealth: 2500, rewardKP: 45, rewardTP: 5000, description: "Kadıkoyde oto yıkamacı çalışanı." },
+          { id: 4, name: "Boran Tübek", baseHealth: 4000, rewardKP: 70, rewardTP: 8500, description: "Moda sahilde viski içiyor." },
+          { id: 5, name: "Orçun Karateke", baseHealth: 6500, rewardKP: 100, rewardTP: 15000, description: "Boğa'ya nasıl gidebileceğini soruyor." },
           { id: 6, name: "Dilan Selîm", baseHealth: 10000, rewardKP: 150, rewardTP: 25000, description: "Sokak müzisyenlerinin korkulu rüyası." },
           { id: 7, name: "Hejar Mistefa", baseHealth: 15000, rewardKP: 220, rewardTP: 40000, description: "Bahariye caddesinin hızlısı." },
           { id: 8, name: "Jiyan Mele", baseHealth: 22000, rewardKP: 300, rewardTP: 60000, description: "Eski Salı Pazarı'nın fenomeni." },
@@ -247,10 +259,10 @@
 
         const UPGRADES = [
           { id: 'u1', name: 'Protein Tozu', description: 'Tıklama gücünü artırır.', baseCost: 50, costMultiplier: 1.5, effectType: 'click', effectValue: 2, icon: '💪' },
-          { id: 'u2', name: 'Eski Klavye', description: 'Daha hızlı yazarsın. Tık gücü +5.', baseCost: 200, costMultiplier: 1.6, effectType: 'click', effectValue: 5, icon: '⌨️' },
+          { id: 'u2', name: 'Nargile', description: 'Daha hızlı yazarsın. Tık gücü +5.', baseCost: 200, costMultiplier: 1.6, effectType: 'click', effectValue: 5, icon: '⌨️' },
           { id: 'u3', name: 'Stajyer Çocuk', description: 'Senin yerine tıklar. (1 oto/sn)', baseCost: 500, costMultiplier: 1.4, effectType: 'auto', effectValue: 1, icon: '👶' },
           { id: 'u4', name: 'Espresso Makinesi', description: 'Enerji patlaması! Tık gücü +20.', baseCost: 1500, costMultiplier: 1.7, effectType: 'click', effectValue: 20, icon: '☕' },
-          { id: 'u5', name: 'Bot Hesaplar', description: 'Sosyal medyada beğeni kasar. (10 oto/sn)', baseCost: 3500, costMultiplier: 1.5, effectType: 'auto', effectValue: 10, icon: '🤖' },
+          { id: 'u5', name: 'Monster Notebook', description: 'Sosyal medyada beğeni kasar. (10 oto/sn)', baseCost: 3500, costMultiplier: 1.5, effectType: 'auto', effectValue: 10, icon: '🤖' },
           { id: 'u6', name: 'Gaming Mouse', description: 'RGB ışıklı. Tık gücü +100.', baseCost: 8000, costMultiplier: 1.8, effectType: 'click', effectValue: 100, icon: '🖱️' },
           { id: 'u7', name: 'Youtuber Ekipman', description: 'Profesyonel prodüksiyon. (50 oto/sn)', baseCost: 20000, costMultiplier: 1.6, effectType: 'auto', effectValue: 50, icon: '📹' },
           { id: 'u8', name: 'Crypto Madenciliği', description: 'Pasif gelir kaynağı. (250 oto/sn)', baseCost: 75000, costMultiplier: 1.5, effectType: 'auto', effectValue: 250, icon: '💎' },
