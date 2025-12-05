@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Timur'un Macerası</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              timur: {
+                50: '#fdf4ff',
+                100: '#fae8ff',
+                200: '#f5d0fe',
+                300: '#f0abfc',
+                400: '#e879f9',
+                500: '#d946ef',
+                600: '#c026d3',
+                700: '#a21caf',
+                800: '#86198f',
+                900: '#701a75',
+              },
+              gold: {
+                400: '#fbbf24',
+                500: '#f59e0b',
+                600: '#d97706',
+              }
+            },
+            animation: {
+              'bounce-short': 'bounce 0.5s infinite',
+              'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both',
+            },
+            keyframes: {
+              shake: {
+                '10%, 90%': { transform: 'translate3d(-1px, 0, 0)' },
+                '20%, 80%': { transform: 'translate3d(2px, 0, 0)' },
+                '30%, 50%, 70%': { transform: 'translate3d(-4px, 0, 0)' },
+                '40%, 60%': { transform: 'translate3d(4px, 0, 0)' }
+              }
+            }
+          },
+        },
+      }
+    </script>
+    <style>
+        /* Custom Utilities */
+        .no-select {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        @keyframes fade-in {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fade-in 0.3s ease-out forwards;
+        }
+        @keyframes float-up {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-40px); opacity: 0; }
+        }
+        .float-text {
+            animation: float-up 0.8s ease-out forwards;
+        }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
+    "react/": "https://aistudiocdn.com/react@^19.2.1/",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0"
+  }
+}
+</script>
+</head>
+<body class="bg-slate-900 text-white overflow-hidden no-select h-screen w-screen flex flex-col">
+
+    <header class="bg-slate-900/90 backdrop-blur-md border-b border-slate-700 p-4 z-40 flex justify-between items-center shadow-lg shrink-0">
+        <div class="flex flex-col">
+            <div class="flex items-center text-timur-400 font-bold text-lg">
+                <span class="mr-1 text-yellow-400" id="icon-header-zap"></span>
+                <span id="display-tp">0</span> TP
+            </div>
+            <div class="text-xs text-slate-400" id="display-auto">
+                +0/sn
+            </div>
+        </div>
+        
+        <div class="flex flex-col items-end">
+            <div class="flex items-center text-rose-400 font-bold text-lg">
+                <span id="display-kp">0</span> KP
+                <span class="ml-1 text-rose-500" id="icon-header-heart"></span>
+            </div>
+            <div class="text-xs text-slate-400" id="display-multiplier">
+               x1.00 Bonus
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 overflow-y-auto relative" id="main-container">
+        <div id="tab-home" class="tab-content active h-full">
+            <div class="flex flex-col items-center justify-center h-full pt-10 pb-24 px-4 space-y-8 animate-fade-in">
+                <div class="text-center space-y-2">
+                    <h1 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-timur-400 to-indigo-400">
+                        TİMUR
+                    </h1>
+                    <p class="text-slate-400 text-sm">Timuçelli İmparatorluğu'nu Kur!</p>
+                </div>
+
+                <div class="relative group cursor-pointer" onclick="game.handleClick(event)">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-pink-600 to-purple-600 rounded-full blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
+                    <div class="relative w-64 h-64 rounded-full bg-slate-800 border-4 border-timur-500 flex items-center justify-center shadow-2xl active:scale-95 transition-transform duration-75 overflow-hidden">
+                        
+                        <img src="https://i.hizliresim.com/fkjgah8.png" alt="Timur" class="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity pointer-events-none" />
+                        
+                        <div class="absolute bottom-4 bg-black/60 px-3 py-1 rounded-full text-white font-bold backdrop-blur-sm pointer-events-none">
+                            Tıkla!
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 w-full max-w-md">
+                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex flex-col items-center">
+                        <span class="text-slate-400 text-xs">Tıklama Gücü</span>
+                        <span class="text-xl font-bold text-white" id="home-click-power">+1</span>
+                    </div>
+                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex flex-col items-center">
+                        <span class="text-slate-400 text-xs">Otomatik</span>
+                        <span class="text-xl font-bold text-white" id="home-auto-power">+0/sn</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-market" class="tab-content">
+            <div class="pt-6 pb-24 px-4 space-y-4 max-w-2xl mx-auto">
+                <h2 class="text-2xl font-bold text-white mb-6 flex items-center">
+                    <span class="mr-2" id="icon-market-title"></span> Market
+                </h2>
+                <div id="upgrades-list" class="grid gap-4">
+                    </div>
+            </div>
+        </div>
+
+        <div id="tab-arena" class="tab-content">
+            <div id="arena-lobby" class="pt-6 pb-24 px-4 space-y-6 max-w-2xl mx-auto">
+                </div>
+            <div id="arena-combat" class="hidden pt-6 pb-24 px-4 flex-col items-center h-full max-w-md mx-auto">
+                </div>
+            <div id="arena-completed" class="hidden pt-20 pb-24 px-4 flex-col items-center justify-center h-full text-center">
+                 </div>
+        </div>
+
+        <div id="tab-social" class="tab-content">
+            <div class="pt-6 pb-24 px-4 space-y-4 max-w-2xl mx-auto">
+                <div class="flex justify-between items-end mb-6">
+                    <h2 class="text-2xl font-bold text-white flex items-center">
+                        <span class="mr-2 text-rose-500" id="icon-social-title"></span> Manitalar
+                    </h2>
+                    <div class="text-xs text-slate-400" id="social-kp-display">
+                        Karizma: 0
+                    </div>
+                </div>
+                <div id="girlfriends-list" class="grid gap-4">
+                    </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="combat-feedback" class="hidden fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
+        <div class="bg-black/70 backdrop-blur-md text-yellow-400 text-5xl font-black px-8 py-4 rounded-2xl animate-bounce border-4 border-yellow-500">
+            KAZANDIN!
+        </div>
+    </div>
+
+    <nav class="bg-slate-900 border-t border-slate-700 pb-safe z-40 shrink-0">
+        <div class="flex justify-around items-center h-16">
+            <button onclick="ui.switchTab('home')" class="nav-btn flex flex-col items-center justify-center w-full h-full transition-colors text-slate-500 hover:text-slate-300" id="nav-home">
+                <span class="icon-nav-home"></span>
+                <span class="text-[10px] mt-1 font-bold">EV</span>
+            </button>
+            <button onclick="ui.switchTab('market')" class="nav-btn flex flex-col items-center justify-center w-full h-full transition-colors text-slate-500 hover:text-slate-300" id="nav-market">
+                <span class="icon-nav-bag"></span>
+                <span class="text-[10px] mt-1 font-bold">MARKET</span>
+            </button>
+            <button onclick="ui.switchTab('arena')" class="nav-btn flex flex-col items-center justify-center w-full h-full transition-colors relative text-slate-500 hover:text-slate-300" id="nav-arena">
+                <div class="absolute -top-3 bg-red-600 rounded-full p-2 border-4 border-slate-900 shadow-lg" id="nav-arena-icon-bg">
+                    <span class="icon-nav-swords text-white"></span>
+                </div>
+                <span class="text-[10px] mt-6 font-bold">SAVAŞ</span>
+            </button>
+            <button onclick="ui.switchTab('social')" class="nav-btn flex flex-col items-center justify-center w-full h-full transition-colors text-slate-500 hover:text-slate-300" id="nav-social">
+                <span class="icon-nav-heart"></span>
+                <span class="text-[10px] mt-1 font-bold">SOSYAL</span>
+            </button>
+        </div>
+    </nav>
+
+    <script>
+        // --- ICONS (SVG Strings) ---
+        const ICONS = {
+            zap: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
+            heart: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>`,
+            heartOutline: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>`,
+            bag: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>`,
+            mapPin: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>`,
+            home: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,
+            swords: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/><line x1="13" x2="19" y1="19" y2="13"/><line x1="16" x2="20" y1="16" y2="20"/><line x1="19" x2="21" y1="21" y2="19"/><polyline points="14.5 6.5 18 3 21 3 21 6 17.5 9.5"/><line x1="5" x2="9" y1="14" y2="18"/><line x1="7" x2="4" y1="17" y2="20"/><line x1="3" x2="5" y1="19" y2="21"/></svg>`,
+            trophy: `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>`
+        };
+
+        // --- CONSTANTS ---
+        const BOSS_LIST = [
+          { id: 1, name: "Emir Toksun", baseHealth: 500, rewardKP: 10, rewardTP: 1000, description: "Kadıköy Rıhtım'ın girişinde senden sigara istiyor." },
+          { id: 2, name: "Eren Atay", baseHealth: 1200, rewardKP: 25, rewardTP: 2500, description: "Boğa heykelinin yanında iqos içiyor." },
+          { id: 3, name: "Baran Xelîl", baseHealth: 2500, rewardKP: 45, rewardTP: 5000, description: "Metro çıkışında bekleyen sert abi." },
+          { id: 4, name: "Botan Ehmed", baseHealth: 4000, rewardKP: 70, rewardTP: 8500, description: "Moda sahilde nargile içiyor." },
+          { id: 5, name: "Ciwan Reşîd", baseHealth: 6500, rewardKP: 100, rewardTP: 15000, description: "Akmar Pasajı'nın eski sahibi." },
+          { id: 6, name: "Dilan Selîm", baseHealth: 10000, rewardKP: 150, rewardTP: 25000, description: "Sokak müzisyenlerinin korkulu rüyası." },
+          { id: 7, name: "Hejar Mistefa", baseHealth: 15000, rewardKP: 220, rewardTP: 40000, description: "Bahariye caddesinin hızlısı." },
+          { id: 8, name: "Jiyan Mele", baseHealth: 22000, rewardKP: 300, rewardTP: 60000, description: "Eski Salı Pazarı'nın fenomeni." },
+          { id: 9, name: "Kawa Hesen", baseHealth: 32000, rewardKP: 400, rewardTP: 90000, description: "Fenerbahçe stadının kapısında bekler." },
+          { id: 10, name: "Rojan Seydo", baseHealth: 45000, rewardKP: 550, rewardTP: 130000, description: "Rexx Sineması önünde buluşma noktası." },
+          { id: 11, name: "Rojhat Îbrahîm", baseHealth: 60000, rewardKP: 750, rewardTP: 200000, description: "Barlar sokağının gece bekçisi." },
+          { id: 12, name: "Serhat Osman", baseHealth: 80000, rewardKP: 1000, rewardTP: 350000, description: "Caferağa spor salonunun şampiyonu." },
+          { id: 13, name: "Viyan Ali", baseHealth: 110000, rewardKP: 1300, rewardTP: 500000, description: "Yeldeğirmeni mahallesinin muhtarı." },
+          { id: 14, name: "Zana Şêrko", baseHealth: 150000, rewardKP: 1700, rewardTP: 750000, description: "Kadıköy vapur iskelesinin kaptanı." },
+          { id: 15, name: "Zinar Cudi", baseHealth: 200000, rewardKP: 2200, rewardTP: 1000000, description: "Haydarpaşa garının gölgesi." },
+          { id: 16, name: "Siyar Mahmud", baseHealth: 280000, rewardKP: 3000, rewardTP: 1500000, description: "Hasanpaşa Gazhanesi'nin müdürü." },
+          { id: 17, name: "Helin Mihemed", baseHealth: 400000, rewardKP: 4000, rewardTP: 2500000, description: "Kurbağalıdere'nin kraliçesi." },
+          { id: 18, name: "Renas Serhed", baseHealth: 600000, rewardKP: 5500, rewardTP: 5000000, description: "Söğütlüçeşme metrobüs durağının sahibi." },
+          { id: 19, name: "Şiyar Şemo", baseHealth: 900000, rewardKP: 7500, rewardTP: 10000000, description: "Kalamış Parkı'nın efendisi." },
+          { id: 20, name: "Ronahî Hacî", baseHealth: 1500000, rewardKP: 10000, rewardTP: 25000000, description: "Tüm Kadıköy'ün Efsanevi Patronu." },
+        ];
+
+        const UPGRADES = [
+          { id: 'u1', name: 'Protein Tozu', description: 'Tıklama gücünü artırır.', baseCost: 50, costMultiplier: 1.5, effectType: 'click', effectValue: 2, icon: '💪' },
+          { id: 'u2', name: 'Eski Klavye', description: 'Daha hızlı yazarsın. Tık gücü +5.', baseCost: 200, costMultiplier: 1.6, effectType: 'click', effectValue: 5, icon: '⌨️' },
+          { id: 'u3', name: 'Stajyer Çocuk', description: 'Senin yerine tıklar. (1 oto/sn)', baseCost: 500, costMultiplier: 1.4, effectType: 'auto', effectValue: 1, icon: '👶' },
+          { id: 'u4', name: 'Espresso Makinesi', description: 'Enerji patlaması! Tık gücü +20.', baseCost: 1500, costMultiplier: 1.7, effectType: 'click', effectValue: 20, icon: '☕' },
+          { id: 'u5', name: 'Bot Hesaplar', description: 'Sosyal medyada beğeni kasar. (10 oto/sn)', baseCost: 3500, costMultiplier: 1.5, effectType: 'auto', effectValue: 10, icon: '🤖' },
+          { id: 'u6', name: 'Gaming Mouse', description: 'RGB ışıklı. Tık gücü +100.', baseCost: 8000, costMultiplier: 1.8, effectType: 'click', effectValue: 100, icon: '🖱️' },
+          { id: 'u7', name: 'Youtuber Ekipman', description: 'Profesyonel prodüksiyon. (50 oto/sn)', baseCost: 20000, costMultiplier: 1.6, effectType: 'auto', effectValue: 50, icon: '📹' },
+          { id: 'u8', name: 'Crypto Madenciliği', description: 'Pasif gelir kaynağı. (250 oto/sn)', baseCost: 75000, costMultiplier: 1.5, effectType: 'auto', effectValue: 250, icon: '💎' },
+          { id: 'u9', name: 'Yazılım Şirketi', description: 'Timuçelli imparatorluğu. (1000 oto/sn)', baseCost: 300000, costMultiplier: 1.5, effectType: 'auto', effectValue: 1000, icon: '🏢' },
+          { id: 'u10', name: 'Kadıköy Tapusu', description: 'Herkes sana çalışır. (5000 oto/sn)', baseCost: 1000000, costMultiplier: 1.6, effectType: 'auto', effectValue: 5000, icon: '📜' },
+        ];
+
+        const GIRLFRIENDS = [
+          { id: 'g1', name: 'Yağmur Onal', requiredKP: 20, description: 'Üniversite öğrencisi, notlarını tutar.', multiplierBonus: 1.1, imagePlaceholder: '200/200' },
+          { id: 'g2', name: 'Zelal', requiredKP: 100, description: 'Yoga eğitmeni, sakin kalmanı sağlar.', multiplierBonus: 1.2, imagePlaceholder: '201/201' },
+          { id: 'g3', name: 'Rüya Çepni', requiredKP: 500, description: 'Influencer, popülerliğini artırır.', multiplierBonus: 1.3, imagePlaceholder: '202/202' },
+          { id: 'g4', name: 'Symbol', requiredKP: 1500, description: 'Yazılımcı, kodlarını debug eder.', multiplierBonus: 1.5, imagePlaceholder: '203/203' },
+          { id: 'g5', name: 'Rana', requiredKP: 5000, description: 'Mimar, geleceğini tasarlar.', multiplierBonus: 2.0, imagePlaceholder: '204/204' },
+        ];
+
+        // --- STATE & LOGIC ---
+
+        const INITIAL_STATE = {
+            timucelliPuani: 0,
+            karizmaPuani: 0,
+            clickPower: 1,
+            autoClickPower: 0,
+            purchasedUpgrades: {},
+            currentBossIndex: 0,
+            unlockedGirlfriends: [],
+            lifetimeClicks: 0,
+        };
+
+        const game = {
+            state: null,
+            activeTab: 'home',
+            isInCombat: false,
+            bossHP: 0,
+
+            init() {
+                // Load state or use initial
+                const saved = localStorage.getItem('timurClickerState_v1');
+                this.state = saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(INITIAL_STATE));
+                
+                // Inject Icons
+                this.injectIcons();
+                
+                // Start Loop
+                setInterval(() => this.tick(), 1000);
+                
+                // Initial Render
+                ui.switchTab('home');
+                ui.updateAll();
+            },
+
+            injectIcons() {
+                document.getElementById('icon-header-zap').innerHTML = ICONS.zap;
+                document.getElementById('icon-header-heart').innerHTML = ICONS.heart;
+                document.getElementById('icon-market-title').innerHTML = ICONS.bag;
+                document.getElementById('icon-social-title').innerHTML = ICONS.heart;
+
+                document.querySelector('.icon-nav-home').innerHTML = ICONS.home;
+                document.querySelector('.icon-nav-bag').innerHTML = ICONS.bag;
+                document.querySelector('.icon-nav-swords').innerHTML = ICONS.swords;
+                document.querySelector('.icon-nav-heart').innerHTML = ICONS.heartOutline;
+            },
+
+            save() {
+                localStorage.setItem('timurClickerState_v1', JSON.stringify(this.state));
+            },
+
+            tick() {
+                if (this.state.autoClickPower > 0) {
+                    const effectiveAuto = this.getEffectiveAutoClick();
+                    this.state.timucelliPuani += effectiveAuto;
+                    ui.updateHeader();
+                    // Optional: Save every tick or less frequently. 
+                    this.save(); 
+                    
+                    // If viewing home, we might want to update UI numbers, but header is enough mostly.
+                    if (this.activeTab === 'home') ui.updateHome();
+                }
+            },
+
+            getEffectiveClickPower() {
+                return Math.floor(this.state.clickPower * this.getTotalMultiplier());
+            },
+
+            getEffectiveAutoClick() {
+                return Math.floor(this.state.autoClickPower * this.getTotalMultiplier());
+            },
+
+            getTotalMultiplier() {
+                let multiplier = 1;
+                GIRLFRIENDS.forEach(gf => {
+                    if (this.state.unlockedGirlfriends.includes(gf.id)) {
+                        multiplier += (gf.multiplierBonus - 1);
+                    }
+                });
+                return multiplier;
+            },
+
+            handleClick(e) {
+                const power = this.getEffectiveClickPower();
+                
+                if (this.activeTab === 'arena' && this.isInCombat) {
+                    this.handleCombatClick();
+                } else {
+                    this.state.timucelliPuani += power;
+                    this.state.lifetimeClicks++;
+                }
+                
+                ui.showFloatingText(e.clientX, e.clientY, `+${power}`);
+                ui.updateHeader();
+                if(this.activeTab === 'home') ui.updateHome();
+                this.save();
+            },
+
+            buyUpgrade(id) {
+                const upgrade = UPGRADES.find(u => u.id === id);
+                if (!upgrade) return;
+
+                const count = this.state.purchasedUpgrades[id] || 0;
+                const cost = Math.floor(upgrade.baseCost * Math.pow(upgrade.costMultiplier, count));
+
+                if (this.state.timucelliPuani >= cost) {
+                    this.state.timucelliPuani -= cost;
+                    this.state.purchasedUpgrades[id] = count + 1;
+                    
+                    if (upgrade.effectType === 'click') this.state.clickPower += upgrade.effectValue;
+                    if (upgrade.effectType === 'auto') this.state.autoClickPower += upgrade.effectValue;
+
+                    this.save();
+                    ui.updateHeader();
+                    ui.renderUpgrades(); // Re-render to update costs/counts
+                    ui.updateHome(); // Update stats display if we switch back
+                }
+            },
+
+            startBossFight() {
+                const boss = BOSS_LIST[this.state.currentBossIndex];
+                if (!boss) return;
+                
+                this.bossHP = boss.baseHealth;
+                this.isInCombat = true;
+                ui.renderArena();
+            },
+
+            handleCombatClick() {
+                const damage = this.getEffectiveClickPower();
+                this.bossHP -= damage;
+                
+                if (this.bossHP <= 0) {
+                    this.winBossFight();
+                } else {
+                    ui.updateBossHP();
+                }
+            },
+
+            winBossFight() {
+                const boss = BOSS_LIST[this.state.currentBossIndex];
+                this.isInCombat = false;
+                this.state.timucelliPuani += boss.rewardTP;
+                this.state.karizmaPuani += boss.rewardKP;
+                this.state.currentBossIndex++;
+                
+                ui.showCombatFeedback();
+                this.save();
+                ui.updateHeader();
+                ui.renderArena();
+            },
+
+            forfeitBossFight() {
+                this.isInCombat = false;
+                ui.renderArena();
+            },
+
+            unlockGirlfriend(id) {
+                const gf = GIRLFRIENDS.find(g => g.id === id);
+                if (!gf) return;
+
+                if (this.state.karizmaPuani >= gf.requiredKP && !this.state.unlockedGirlfriends.includes(id)) {
+                    this.state.karizmaPuani -= gf.requiredKP;
+                    this.state.unlockedGirlfriends.push(id);
+                    this.save();
+                    ui.updateHeader();
+                    ui.renderSocial();
+                }
+            }
+        };
+
+        const ui = {
+            updateAll() {
+                this.updateHeader();
+                this.updateHome();
+                this.renderUpgrades();
+                this.renderArena();
+                this.renderSocial();
+            },
+
+            updateHeader() {
+                document.getElementById('display-tp').textContent = game.state.timucelliPuani.toLocaleString();
+                document.getElementById('display-kp').textContent = game.state.karizmaPuani.toLocaleString();
+                document.getElementById('display-auto').textContent = `+${game.getEffectiveAutoClick()}/sn`;
+                document.getElementById('display-multiplier').textContent = `x${game.getTotalMultiplier().toFixed(2)} Bonus`;
+                
+                // Update Market Buttons availability roughly (optimization: do this in renderMarket loop usually, but for responsiveness)
+                // We'll rely on renderUpgrades being called on switch or purchase.
+            },
+            
+            updateHome() {
+                document.getElementById('home-click-power').textContent = `+${game.getEffectiveClickPower()}`;
+                document.getElementById('home-auto-power').textContent = `+${game.getEffectiveAutoClick()}/sn`;
+            },
+
+            switchTab(tabId) {
+                game.activeTab = tabId;
+                
+                // Hide all contents
+                document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+                // Show active
+                document.getElementById(`tab-${tabId}`).classList.add('active');
+
+                // Update Bottom Nav Colors
+                document.querySelectorAll('.nav-btn').forEach(el => {
+                    el.classList.remove('text-timur-400', 'text-rose-400', 'text-red-500');
+                    el.classList.add('text-slate-500');
+                });
+
+                if (tabId === 'home') document.getElementById('nav-home').classList.add('text-timur-400');
+                if (tabId === 'market') document.getElementById('nav-market').classList.add('text-timur-400');
+                if (tabId === 'arena') document.getElementById('nav-arena').classList.add('text-red-500');
+                if (tabId === 'social') document.getElementById('nav-social').classList.add('text-rose-400');
+
+                // Arena Animation
+                const arenaBg = document.getElementById('nav-arena-icon-bg');
+                if (game.isInCombat) arenaBg.classList.add('animate-pulse');
+                else arenaBg.classList.remove('animate-pulse');
+
+                // Re-render dynamic content
+                if (tabId === 'market') this.renderUpgrades();
+                if (tabId === 'arena') this.renderArena();
+                if (tabId === 'social') this.renderSocial();
+                if (tabId === 'home') this.updateHome();
+            },
+
+            renderUpgrades() {
+                const container = document.getElementById('upgrades-list');
+                container.innerHTML = '';
+
+                UPGRADES.forEach(u => {
+                    const count = game.state.purchasedUpgrades[u.id] || 0;
+                    const cost = Math.floor(u.baseCost * Math.pow(u.costMultiplier, count));
+                    const canAfford = game.state.timucelliPuani >= cost;
+
+                    const btn = document.createElement('button');
+                    btn.className = `flex items-center p-4 rounded-xl border-2 transition-all duration-200 text-left w-full ${canAfford ? 'bg-slate-800 border-slate-600 hover:border-timur-500 active:scale-[0.98]' : 'bg-slate-900 border-slate-800 opacity-60 cursor-not-allowed'}`;
+                    btn.onclick = () => game.buyUpgrade(u.id);
+                    btn.disabled = !canAfford;
+                    
+                    btn.innerHTML = `
+                        <div class="text-4xl mr-4">${u.icon}</div>
+                        <div class="flex-1">
+                            <div class="flex justify-between items-center mb-1">
+                                <h3 class="font-bold text-white">${u.name}</h3>
+                                <span class="bg-slate-700 text-xs px-2 py-1 rounded-full text-white">Lvl ${count}</span>
+                            </div>
+                            <p class="text-xs text-slate-400 mb-2">${u.description}</p>
+                            <div class="flex items-center text-sm font-bold text-yellow-400">
+                                ${cost.toLocaleString()} TP
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(btn);
+                });
+            },
+
+            renderArena() {
+                const lobby = document.getElementById('arena-lobby');
+                const combat = document.getElementById('arena-combat');
+                const completed = document.getElementById('arena-completed');
+                
+                lobby.classList.add('hidden');
+                combat.classList.add('hidden');
+                completed.classList.add('hidden');
+                completed.classList.remove('flex');
+                combat.classList.remove('flex');
+
+                if (game.state.currentBossIndex >= BOSS_LIST.length) {
+                    completed.classList.remove('hidden');
+                    completed.classList.add('flex');
+                    completed.innerHTML = `
+                        <div class="mb-6 text-yellow-400 animate-bounce">${ICONS.trophy}</div>
+                        <h2 class="text-3xl font-bold text-white mb-2">TEBRİKLER!</h2>
+                        <p class="text-slate-300 mb-4">Kadıköy'ün tek hakimi oldun!</p>
+                        <div class="bg-slate-800 p-6 rounded-xl border border-yellow-500/50">
+                             <p>Timuçelli Krallığı kuruldu.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const currentBoss = BOSS_LIST[game.state.currentBossIndex];
+
+                if (game.isInCombat) {
+                    combat.classList.remove('hidden');
+                    combat.classList.add('flex');
+                    // Render Combat View
+                    const hpPercent = Math.max(0, (game.bossHP / currentBoss.baseHealth) * 100);
+                    
+                    combat.innerHTML = `
+                        <div class="w-full bg-slate-800 rounded-full h-6 mb-2 border border-slate-600 overflow-hidden relative">
+                            <div class="h-full bg-red-600 transition-all duration-100 ease-out" style="width: ${hpPercent}%" id="boss-hp-bar"></div>
+                            <span class="absolute inset-0 flex items-center justify-center text-xs font-bold text-white shadow-black drop-shadow-md" id="boss-hp-text">
+                                ${Math.ceil(game.bossHP)} / ${currentBoss.baseHealth}
+                            </span>
+                        </div>
+                        <div class="flex-1 flex flex-col items-center justify-center w-full relative">
+                            <div class="text-center mb-8 animate-pulse">
+                                <h2 class="text-3xl font-bold text-red-500">${currentBoss.name}</h2>
+                                <p class="text-slate-400 text-sm mt-1">"${currentBoss.description}"</p>
+                            </div>
+                            <button onmousedown="game.handleClick(event)" class="relative w-64 h-64 active:scale-90 transition-transform duration-75 group">
+                                <div class="absolute inset-0 bg-red-500/20 rounded-full blur-xl group-active:bg-red-500/40 transition-colors"></div>
+                                <img src="https://picsum.photos/seed/${currentBoss.id}/400/400" class="w-full h-full object-cover rounded-xl border-4 border-red-600 shadow-2xl z-10 relative" alt="Boss" />
+                                <div class="absolute -bottom-6 left-0 right-0 text-center animate-bounce text-red-400 font-bold uppercase tracking-widest">Saldır!</div>
+                            </button>
+                        </div>
+                        <button onclick="game.forfeitBossFight()" class="mt-8 px-6 py-3 rounded-full bg-slate-700 text-white font-bold hover:bg-slate-600">
+                            Kaç (Savaşı Terk Et)
+                        </button>
+                    `;
+                } else {
+                    lobby.classList.remove('hidden');
+                    // Render Lobby
+                    lobby.innerHTML = `
+                        <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-6 border border-slate-700 shadow-xl text-center">
+                            <div class="mb-4">
+                                <span class="bg-red-900/50 text-red-200 px-3 py-1 rounded-full text-sm font-bold border border-red-700">BOSS #${currentBoss.id}</span>
+                            </div>
+                            <h3 class="text-3xl font-bold text-white mb-2">${currentBoss.name}</h3>
+                            <p class="text-slate-400 mb-6 italic">"${currentBoss.description}"</p>
+                            <div class="grid grid-cols-2 gap-4 mb-8">
+                                <div class="bg-slate-900/50 p-3 rounded-lg">
+                                    <div class="text-xs text-slate-500 uppercase">Ödül (TP)</div>
+                                    <div class="text-yellow-400 font-bold text-lg">${currentBoss.rewardTP.toLocaleString()}</div>
+                                </div>
+                                <div class="bg-slate-900/50 p-3 rounded-lg">
+                                    <div class="text-xs text-slate-500 uppercase">Ödül (KP)</div>
+                                    <div class="text-rose-400 font-bold text-lg">${currentBoss.rewardKP.toLocaleString()}</div>
+                                </div>
+                            </div>
+                            <button onclick="game.startBossFight()" class="w-full py-4 bg-red-600 hover:bg-red-500 text-white font-bold rounded-xl shadow-lg shadow-red-900/50 transition-all active:translate-y-1 flex items-center justify-center text-xl">
+                                <span class="mr-2">${ICONS.swords}</span> SAVAŞ
+                            </button>
+                        </div>
+                        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 opacity-75">
+                            <h4 class="font-bold text-slate-300 mb-2">İlerleme Durumu</h4>
+                            <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden">
+                                <div class="bg-green-500 h-full" style="width: ${(game.state.currentBossIndex / BOSS_LIST.length) * 100}%"></div>
+                            </div>
+                            <div class="text-right text-xs text-slate-500 mt-1">${game.state.currentBossIndex} / ${BOSS_LIST.length} Fethedildi</div>
+                        </div>
+                    `;
+                }
+            },
+
+            updateBossHP() {
+                const currentBoss = BOSS_LIST[game.state.currentBossIndex];
+                const hpPercent = Math.max(0, (game.bossHP / currentBoss.baseHealth) * 100);
+                document.getElementById('boss-hp-bar').style.width = `${hpPercent}%`;
+                document.getElementById('boss-hp-text').textContent = `${Math.ceil(game.bossHP)} / ${currentBoss.baseHealth}`;
+            },
+
+            renderSocial() {
+                const container = document.getElementById('girlfriends-list');
+                container.innerHTML = '';
+                document.getElementById('social-kp-display').textContent = `Karizma: ${game.state.karizmaPuani}`;
+
+                GIRLFRIENDS.forEach(gf => {
+                    const isUnlocked = game.state.unlockedGirlfriends.includes(gf.id);
+                    const canUnlock = game.state.karizmaPuani >= gf.requiredKP;
+                    
+                    const el = document.createElement('div');
+                    el.className = `relative overflow-hidden rounded-xl border-2 transition-all duration-300 ${isUnlocked ? 'bg-slate-800 border-rose-500 shadow-[0_0_15px_rgba(244,63,94,0.3)]' : 'bg-slate-900 border-slate-800'}`;
+                    
+                    el.innerHTML = `
+                        <div class="flex p-4">
+                            <img src="https://picsum.photos/${gf.imagePlaceholder}" alt="${gf.name}" class="w-20 h-20 rounded-lg object-cover mr-4 ${!isUnlocked ? 'grayscale opacity-50' : ''}" />
+                            <div class="flex-1 z-10">
+                                <div class="flex justify-between items-start">
+                                    <h3 class="font-bold text-lg ${isUnlocked ? 'text-rose-400' : 'text-slate-500'}">${gf.name}</h3>
+                                    ${isUnlocked ? '<span class="bg-rose-900/30 text-rose-300 text-xs px-2 py-1 rounded border border-rose-800">Aktif</span>' : '<span class="text-xs text-slate-500">Kilitli</span>'}
+                                </div>
+                                <p class="text-sm text-slate-300 mb-2">${gf.description}</p>
+                                ${isUnlocked 
+                                    ? `<div class="text-xs font-bold text-green-400">Etki: x${gf.multiplierBonus} Global Çarpan</div>` 
+                                    : `<button onclick="game.unlockGirlfriend('${gf.id}')" ${!canUnlock ? 'disabled' : ''} class="w-full mt-1 py-1.5 px-3 rounded text-sm font-bold flex items-center justify-center ${canUnlock ? 'bg-rose-600 hover:bg-rose-500 text-white' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}">Kilidi Aç (${gf.requiredKP} KP)</button>`
+                                }
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(el);
+                });
+            },
+
+            showFloatingText(x, y, text) {
+                const el = document.createElement('div');
+                el.className = 'pointer-events-none fixed z-50 float-text text-2xl font-bold text-white drop-shadow-md select-none';
+                el.style.left = (x - 20) + 'px';
+                el.style.top = (y - 40) + 'px';
+                el.textContent = text;
+                document.body.appendChild(el);
+                setTimeout(() => el.remove(), 800);
+            },
+
+            showCombatFeedback() {
+                const el = document.getElementById('combat-feedback');
+                el.classList.remove('hidden');
+                setTimeout(() => el.classList.add('hidden'), 2000);
+            }
+        };
+
+        // Initialize Game
+        game.init();
+    </script>
+</body>
+</html>
